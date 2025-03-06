@@ -1,3 +1,4 @@
+import { lightningCssTransform } from "next/dist/build/swc/generated-native";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -11,4 +12,7 @@ export default {
         },
     },
     plugins: [require("daisyui")],
+    daisyui: {
+        themes: ["light", "dark"],
+    },
 } satisfies Config;
