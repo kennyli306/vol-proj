@@ -5,7 +5,7 @@ export default function NavBar() {
 
 
     return (
-        <div className="navbar shadow-md">
+        <div className="navbar shadow-md mt-4 mb-4">
             <div className="flex-1">
                 <a className="btn btn-ghost text-xl" href="/">Vol Project</a>
             </div>
