@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React from 'react'
 
 export default function SearchBar() {
@@ -8,6 +8,26 @@ export default function SearchBar() {
             modal.showModal();
         }
     };
+
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+
+        fetch('/api/post', {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                const modal = document.getElementById('add_post_modal') as HTMLDialogElement | null;
+                if (modal) {
+                    modal.close();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
     return (
         <div className="max-w-[1080px]">
@@ -44,6 +64,21 @@ export default function SearchBar() {
             <dialog id="add_post_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Add Posts</h3>
+
+                    <form onSubmit={handleSubmit}>
+                        <fieldset className="fieldset">
+                            <legend className="fieldset-legend">Title</legend>
+                            <input name="title" type="text" className="input" placeholder="Title" required />
+                            <legend className="fieldset-legend">Organization</legend>
+                            <input name="organization" type="text" className="input" placeholder="Organization" required />
+                            <legend className="fieldset-legend">Location</legend>
+                            <input name="location" type="text" className="input" placeholder="Location" required />
+                            <legend className="fieldset-legend">Description</legend>
+                            <textarea name="description" className="textarea h-24" placeholder="Description" required></textarea>
+                        </fieldset>
+                        <button type="submit" className="btn btn-primary mt-4">Add Post</button>
+                    </form>
+
                     <p className="py-4">Press ESC key or click outside to close</p>
                 </div>
                 <form method="dialog" className="modal-backdrop">

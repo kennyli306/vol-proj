@@ -7,7 +7,8 @@ export default function Listings() {
             <ul className="list rounded-box shadow-md min-h-screen mb-4">
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
 
-                <Post listId={1} postId={0} />
+                <Post listId={1} postId={1} />
+                <Post listId={2} postId={2} />
 
             </ul>
             <div className="join float-right">
