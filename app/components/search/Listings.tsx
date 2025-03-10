@@ -1,15 +1,51 @@
-import React from 'react'
+"use client"
+import React, { useEffect } from 'react'
 import Post from '@app/components/search/Post';
 
-export default function Listings() {
+interface ListingsProps {
+    refresh: boolean;
+}
+
+export default function Listings({ refresh }: ListingsProps) {
+    const [posts, setPosts] = React.useState<number[]>([]);
+
+    const fetchPosts = async () => {
+        let staleRequest = false;
+        const url = `/api/posts/`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(response.statusText);
+
+            const data = await response.json();
+            if (!staleRequest) {
+                const postIds = data.map((post: { id: number }) => post.id);
+                setPosts(postIds);
+            }
+        } catch (error) {
+            console.error("Error fetching posts:", error);
+        }
+
+        return () => {
+            staleRequest = true;
+        };
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, [refresh]);
+
     return (
         <div>
             <ul className="list rounded-box shadow-md min-h-screen mb-4">
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
-
-                <Post listId={1} postId={1} />
-                <Post listId={2} postId={2} />
-
+                {
+                    posts.length > 0 ? posts.map((postId, index) => (
+                        <Post key={index} listId={index + 1} postId={postId} />
+                    )) : <li className="list-row flex justify-center items-center">
+                        <span className="loading loading-spinner loading-xl"></span>
+                    </li>
+                }
             </ul>
             <div className="join float-right">
                 <button className="join-item btn btn-active">1</button>

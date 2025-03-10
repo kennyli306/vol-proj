@@ -1,7 +1,5 @@
 "use client"
-import React from 'react'
-import { useEffect } from 'react'
-
+import React, { useEffect } from 'react'
 
 interface PostProps {
     listId: number;
@@ -17,7 +15,7 @@ export default function Post({ listId, postId }: PostProps) {
 
     useEffect(() => {
         let staleRequest = false;
-        let url = `/api/post/${postId}`;
+        let url = `/api/posts/${postId}`;
         fetch(url)
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);

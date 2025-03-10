@@ -1,9 +1,16 @@
 "use client"
-import React from 'react'
+import React, { useRef } from 'react';
 
-export default function SearchBar() {
-    function openModal(modal_name: string) {
-        const modal = document.getElementById(modal_name) as HTMLDialogElement | null;
+interface SearchBarProps {
+    refreshPage: () => void;
+}
+
+export default function SearchBar({ refreshPage }: SearchBarProps) {
+    const formRef = useRef<HTMLFormElement>(null);
+    const addPostModalRef = useRef<HTMLDialogElement>(null);
+    const filterModalRef = useRef<HTMLDialogElement>(null);
+
+    function openModal(modal: HTMLDialogElement | null) {
         if (modal) {
             modal.showModal();
         }
@@ -13,7 +20,7 @@ export default function SearchBar() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
-        fetch('/api/post', {
+        fetch('/api/posts', {
             method: "POST",
             body: formData,
         })
@@ -21,12 +28,17 @@ export default function SearchBar() {
                 if (!response.ok) {
                     throw Error(response.statusText);
                 }
-                const modal = document.getElementById('add_post_modal') as HTMLDialogElement | null;
-                if (modal) {
-                    modal.close();
+
+                if (addPostModalRef.current) {
+                    addPostModalRef.current.close();
                 }
+                if (formRef.current) {
+                    formRef.current.reset(); // Reset the form
+                }
+                refreshPage();
             })
             .catch(error => console.error('Error:', error));
+
     }
 
     return (
@@ -46,11 +58,11 @@ export default function SearchBar() {
                 </svg>
                 <input type="search" placeholder="Search" />
             </label>
-            <button className="btn" onClick={() => openModal('filter_modal')}>Filters</button>
-            <button className="btn btn-primary float-right" onClick={() => openModal('add_post_modal')}>Add Postings</button>
+            <button className="btn" onClick={() => openModal(filterModalRef.current)}>Filters</button>
+            <button className="btn btn-primary float-right" onClick={() => openModal(addPostModalRef.current)}>Add Postings</button>
 
             {/* Modal for filters*/}
-            <dialog id="filter_modal" className="modal">
+            <dialog ref={filterModalRef} className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Filters</h3>
                     <p className="py-4">Press ESC key or click outside to close</p>
@@ -61,11 +73,11 @@ export default function SearchBar() {
             </dialog>
 
             {/* Modal for adding posts*/}
-            <dialog id="add_post_modal" className="modal">
+            <dialog ref={addPostModalRef} className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Add Posts</h3>
 
-                    <form onSubmit={handleSubmit}>
+                    <form ref={formRef} onSubmit={handleSubmit}>
                         <fieldset className="fieldset">
                             <legend className="fieldset-legend">Title</legend>
                             <input name="title" type="text" className="input" placeholder="Title" required />
