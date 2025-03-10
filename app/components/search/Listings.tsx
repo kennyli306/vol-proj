@@ -8,6 +8,7 @@ interface ListingsProps {
 
 export default function Listings({ refresh }: ListingsProps) {
     const [posts, setPosts] = React.useState<number[]>([]);
+    const [postsLoaded, setPostsLoaded] = React.useState<boolean>(false);
 
     const fetchPosts = async () => {
         let staleRequest = false;
@@ -15,12 +16,15 @@ export default function Listings({ refresh }: ListingsProps) {
 
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error(response.statusText);
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
 
             const data = await response.json();
             if (!staleRequest) {
                 const postIds = data.map((post: { id: number }) => post.id);
                 setPosts(postIds);
+                setPostsLoaded(true);
             }
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -40,7 +44,7 @@ export default function Listings({ refresh }: ListingsProps) {
             <ul className="list rounded-box shadow-md min-h-screen mb-4">
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
                 {
-                    posts.length > 0 ? posts.map((postId, index) => (
+                    postsLoaded ? posts.map((postId, index) => (
                         <Post key={index} listId={index + 1} postId={postId} />
                     )) : <li className="list-row flex justify-center items-center">
                         <span className="loading loading-spinner loading-xl"></span>
