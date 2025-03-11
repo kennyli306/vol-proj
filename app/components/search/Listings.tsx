@@ -39,13 +39,17 @@ export default function Listings({ refresh }: ListingsProps) {
         fetchPosts();
     }, [refresh]);
 
+    const handlePostDelete = (deletedPostId: number) => {
+        setPosts(currentPosts => currentPosts.filter(id => id !== deletedPostId));
+    };
+
     return (
         <div>
             <ul className="list rounded-box shadow-md min-h-screen mb-4">
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
                 {
                     postsLoaded ? posts.map((postId, index) => (
-                        <Post key={index} listId={index + 1} postId={postId} />
+                        <Post key={index} listId={index + 1} postId={postId} onDelete={handlePostDelete}/>
                     )) : <li className="list-row flex justify-center items-center">
                         <span className="loading loading-spinner loading-xl"></span>
                     </li>

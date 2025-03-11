@@ -4,9 +4,10 @@ import React, { useEffect } from 'react'
 interface PostProps {
     listId: number;
     postId: number;
+    onDelete: (postId: number) => void;
 }
 
-export default function Post({ listId, postId }: PostProps) {
+export default function Post({ listId, postId, onDelete }: PostProps) {
     const [title, setTitle] = React.useState<string>("");
     const [organization, setOrganization] = React.useState<string>("");
     const [location, setLocation] = React.useState<string>("");
@@ -45,6 +46,16 @@ export default function Post({ listId, postId }: PostProps) {
             </li>
         )
     }
+    const handleDelete = () => {
+      fetch(`/api/posts/${postId}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+            if (!response.ok) throw Error(response.statusText);
+            onDelete(postId);
+        })
+        .catch((error) => console.log("Error deleting post:", error));
+    };
     return (
         <li className="list-row">
             <div className="text-6xl font-thin opacity-30 tabular-nums">{listId}</div>
@@ -67,6 +78,9 @@ export default function Post({ listId, postId }: PostProps) {
                     </g>
                 </svg>
             </button>
+            <button onClick={handleDelete} className="btn btn-danger text-red-500">
+                Delete
+            </button>  
         </li>
     )
 }
