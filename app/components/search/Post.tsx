@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect } from 'react'
-
+import { getCookie } from '@app/utils';
 interface PostProps {
     listId: number;
     postId: number;
@@ -12,11 +12,12 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
     const [organization, setOrganization] = React.useState<string>("");
     const [location, setLocation] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
+    const [creatorName, setCreatorName] = React.useState<string>("");
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
 
     useEffect(() => {
         let staleRequest = false;
-        let url = `/api/posts/${postId}`;
+        const url = `/api/posts/${postId}`;
         fetch(url)
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
@@ -30,6 +31,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 setOrganization(data.organization);
                 setLocation(data.location);
                 setDescription(data.description);
+                setCreatorName(data.creator_name); 
                 setPostLoaded(true);
             })
             .catch((error) => console.log(error));
@@ -56,6 +58,9 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
         })
         .catch((error) => console.log("Error deleting post:", error));
     };
+
+    const currentUsername = getCookie("username");
+
     return (
         <li className="list-row">
             <div className="text-6xl font-thin opacity-30 tabular-nums">{listId}</div>
@@ -78,9 +83,11 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                     </g>
                 </svg>
             </button>
-            <button onClick={handleDelete} className="btn btn-danger text-red-500">
+            {creatorName === currentUsername && ( // Show only if current user is the owner
+                <button onClick={handleDelete} className="btn btn-danger text-red-500">
                 Delete
-            </button>  
+                </button>
+            )} 
         </li>
     )
 }

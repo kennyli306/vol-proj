@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
         const posts = await prisma.post.findMany({
             select: {
@@ -28,7 +28,8 @@ export async function POST(req: Request) {
         title: formData.get('title') as string,
         organization: formData.get('organization') as string,
         location: formData.get('location') as string,
-        description: formData.get('description') as string
+        description: formData.get('description') as string,
+        username: formData.get('username') as string
     };
 
     try {
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
                 organization: data.organization,
                 location: data.location,
                 description: data.description,
+                creator_name: data.username
             },
         });
         return new NextResponse(JSON.stringify(post), { status: 201 });

@@ -13,4 +13,13 @@ model Post {
   location     String
   description  String
   organization String
+
+  creator   User   @relation(fields: [creator_name], references: [username])
+  creator_name String
+}
+
+model User {
+  username String @id
+  password String
+  posts Post[]
 }
