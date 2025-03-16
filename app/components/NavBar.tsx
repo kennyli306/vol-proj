@@ -28,13 +28,13 @@ export default function NavBar() {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between" >
+                            <a className="justify-between" onClick={() => router.push("/profile")} >
                                 Profile
                                 <span className="badge bg-error text-error-content">TODO</span>
                             </a>
                         </li>
                         <li>
-                            <a className="justify-between">
+                            <a className="justify-between" onClick={() => router.push("/settings")}>
                                 Settings
                                 <span className="badge bg-error text-error-content">TODO</span>
                             </a>
