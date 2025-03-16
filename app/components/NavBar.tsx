@@ -1,13 +1,23 @@
-import { useState } from "react";
+"use client"
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { deleteCookie } from "@app/utils";
 
 export default function NavBar() {
+    const router = useRouter();
 
+    const handleLogout = () => {
+      // Remove authentication cookies
+      deleteCookie("username");
+      // Redirect to home page
+      router.replace("/");
+    };
 
     return (
         <div className="navbar shadow-md mt-4 mb-4">
             <div className="flex-1">
-                <a className="btn btn-ghost text-xl" href="/">Vol Project</a>
+                <Link className="btn btn-ghost text-xl" href="/">Vol Project</Link>
             </div>
             <div className="flex-none">
                 <div className="dropdown dropdown-end">
@@ -30,9 +40,8 @@ export default function NavBar() {
                             </a>
                         </li>
                         <li>
-                            <a className="justify-between">
+                            <a className="justify-between" onClick={handleLogout}>
                                 Logout
-                                <span className="badge bg-error text-error-content">TODO</span>
                             </a>
                         </li>
                     </ul>

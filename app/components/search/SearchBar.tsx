@@ -1,4 +1,5 @@
 "use client"
+import { getCookie } from '@app/utils';
 import React, { useRef } from 'react';
 
 interface SearchBarProps {
@@ -19,6 +20,12 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
+        const username = getCookie("username");
+        if (!username) {
+          console.error("User is not logged in");
+          return;
+        }
+        formData.append("username", username);
 
         fetch('/api/posts', {
             method: "POST",
