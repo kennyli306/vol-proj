@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@prisma/client": "^6.4.1",
+        "@react-google-maps/api": "^2.20.6",
         "@tailwindcss/postcss": "^4.0.10",
         "next": "15.1.6",
         "react": "^19.0.0",
