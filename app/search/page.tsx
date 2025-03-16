@@ -1,5 +1,5 @@
 "use client"
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import Footer from '@app/components/Footer';
@@ -7,6 +7,7 @@ import NavBar from '@app/components/NavBar';
 import SearchBar from '@app/components/search/SearchBar';
 import Listings from '@app/components/search/Listings';
 import { isUserLoggedIn } from '@app/utils';
+import LocationField from '@app/components/LocationField';
 
 
 export default function SearchPage() {
@@ -19,30 +20,31 @@ export default function SearchPage() {
 
     useEffect(() => {
         if (!isUserLoggedIn()) {
-        // Check if the user is not logged in
-        router.replace(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`); // Redirect to login page
-        }else{
-        setAuthChecked(true)
+            // Check if the user is not logged in
+            router.replace(`/login?returnTo=${encodeURIComponent(window.location.pathname)}`); // Redirect to login page
+        } else {
+            setAuthChecked(true)
         }
     }, [router]);
 
-    if (!authChecked){
+    if (!authChecked) {
         return null
     }
-        return (
+    return (
         <div className="flex flex-col min-h-screen max-w-[1080px] mx-auto m-16">
             <NavBar />
             <div className="breadcrumbs text-sm">
-            <ul>
-                <li>
-                <Link href="/">Home</Link>
-                </li>
-                <li>Search</li>
-            </ul>
+                <ul>
+                    <li>
+                        <Link href="/">Home</Link>
+                    </li>
+                    <li>Search</li>
+                </ul>
             </div>
+            <LocationField />
             <SearchBar refreshPage={handleRefresh} />
             <Listings refresh={refresh} />
             <Footer />
         </div>
-        );
+    );
 }

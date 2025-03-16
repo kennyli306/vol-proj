@@ -1,25 +1,37 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model Post {
-  id           Int    @id @default(autoincrement())
-  title        String
-  location     String
-  description  String
-  organization String
+    id           Int    @id @default(autoincrement())
+    title        String
+    location     String
+    description  String
+    organization String
 
-  creator   User   @relation(fields: [creator_name], references: [username])
-  creator_name String
+    creator      User   @relation(fields: [creator_name], references: [username])
+    creator_name String
+}
+
+model Address {
+    id            Int    @id @default(autoincrement())
+    street_number String
+    street_name   String // route
+    neighborhood  String
+    city          String // locality
+    county        String // administrative_area_level_2
+    state         String // administrative_area_level_1 
+    country       String
+    postal_code   String
 }
 
 model User {
-  username String @id
-  password String
-  posts Post[]
+    username String @id
+    password String
+    posts    Post[]
 }
