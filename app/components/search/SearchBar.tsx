@@ -1,6 +1,7 @@
 "use client"
 import { getCookie } from '@app/utils';
 import React, { useRef } from 'react';
+import Link from 'next/link';
 
 interface SearchBarProps {
     refreshPage: () => void;
@@ -22,8 +23,8 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
         const formData = new FormData(event.currentTarget);
         const username = getCookie("username");
         if (!username) {
-          console.error("User is not logged in");
-          return;
+            console.error("User is not logged in");
+            return;
         }
         formData.append("username", username);
 
@@ -45,7 +46,6 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
                 refreshPage();
             })
             .catch(error => console.error('Error:', error));
-
     }
 
     return (
@@ -66,38 +66,12 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
                 <input type="search" placeholder="Search" />
             </label>
             <button className="btn" onClick={() => openModal(filterModalRef.current)}>Filters</button>
-            <button className="btn btn-primary float-right" onClick={() => openModal(addPostModalRef.current)}>Add Postings</button>
+            <Link href="/search/posts" className="btn btn-primary float-right">Add Postings</Link>
 
             {/* Modal for filters*/}
             <dialog ref={filterModalRef} className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Filters</h3>
-                    <p className="py-4">Press ESC key or click outside to close</p>
-                </div>
-                <form method="dialog" className="modal-backdrop">
-                    <button>close</button>
-                </form>
-            </dialog>
-
-            {/* Modal for adding posts*/}
-            <dialog ref={addPostModalRef} className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Add Posts</h3>
-
-                    <form ref={formRef} onSubmit={handleSubmit}>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Title</legend>
-                            <input name="title" type="text" className="input" placeholder="Title" required />
-                            <legend className="fieldset-legend">Organization</legend>
-                            <input name="organization" type="text" className="input" placeholder="Organization" required />
-                            <legend className="fieldset-legend">Location</legend>
-                            <input name="location" type="text" className="input" placeholder="Location" required />
-                            <legend className="fieldset-legend">Description</legend>
-                            <textarea name="description" className="textarea h-24" placeholder="Description" required></textarea>
-                        </fieldset>
-                        <button type="submit" className="btn btn-primary mt-4">Add Post</button>
-                    </form>
-
                     <p className="py-4">Press ESC key or click outside to close</p>
                 </div>
                 <form method="dialog" className="modal-backdrop">

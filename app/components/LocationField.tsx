@@ -25,7 +25,17 @@ export default function LocationField() {
         autocomplete.addListener("place_changed", () => {
             handlePlaceChanged(autocomplete);
         });
-        console.log(autocomplete);
+
+        setTimeout(() => {
+            const pacContainer = document.querySelector(".pac-container");
+            if (pacContainer) {
+                pacContainer.classList.add(
+                    "list-item",
+                    "truncate",
+                    "rounded-lg",
+                );
+            }
+        }, 0);
     }, [isLoaded, loadError]);
 
     const handlePlaceChanged = (autocomplete: google.maps.places.Autocomplete) => {
@@ -36,10 +46,10 @@ export default function LocationField() {
             setInput("");
             return;
         }
-        
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("handleChange called");
         const { value } = event.target;
         setInput(value);
     };
@@ -49,7 +59,7 @@ export default function LocationField() {
             ref={inputRef}
             name="location"
             type="text"
-            className="input"
+            className="input w-full"
             placeholder="Location"
             required
             value={input}

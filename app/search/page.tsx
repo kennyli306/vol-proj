@@ -41,7 +41,6 @@ export default function SearchPage() {
                     <li>Search</li>
                 </ul>
             </div>
-            <LocationField />
             <SearchBar refreshPage={handleRefresh} />
             <Listings refresh={refresh} />
             <Footer />

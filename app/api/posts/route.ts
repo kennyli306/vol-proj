@@ -28,23 +28,21 @@ export async function POST(req: Request) {
         title: formData.get('title') as string,
         organization: formData.get('organization') as string,
         location: formData.get('location') as string,
-        description: formData.get('description') as string,
-        username: formData.get('username') as string
+        description: formData.get('description') as string
     };
 
     try {
+        console.log("Data received:", data);
         const post = await prisma.post.create({
             data: {
                 title: data.title,
                 organization: data.organization,
                 location: data.location,
-                description: data.description,
-                creator_name: data.username
+                description: data.description
             },
         });
         return new NextResponse(JSON.stringify(post), { status: 201 });
     } catch (error) {
-        console.error("Error creating post:", error);
         return new NextResponse(JSON.stringify({ error: "Error creating post" }), { status: 500 });
     }
 }
