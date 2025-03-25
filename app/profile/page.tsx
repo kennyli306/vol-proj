@@ -1,15 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getCookie, setCookie } from "@app/utils";
+import { getCookie } from "@app/utils";
 import { useRouter } from "next/navigation";
 import NavBar from "@app/components/NavBar";
 
 export default function ProfilePage() {
     const router = useRouter();
     const [username, setUsername] = useState("");
-    const [newUsername, setNewUsername] = useState("");
     const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const storedUsername = getCookie("username");
@@ -17,69 +16,56 @@ export default function ProfilePage() {
             router.push("/login");
         } else {
             setUsername(storedUsername);
-            setNewUsername(storedUsername);
+            fetchPosts(storedUsername);
         }
-        setLoading(false);
     }, []);
 
-    const handleUpdateUsername = async () => {
-        if (!newUsername) {
-            setErrorMessage("Username cannot be empty!");
-            return;
-        }
-
+    const fetchPosts = async (username: string) => {
         try {
-            const response = await fetch("/api/profile", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ oldUsername: username, newUsername }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || "Failed to update username");
-                return;
+            const res = await fetch(`/api/posts?username=${username}`);
+            if (res.ok) {
+                const data = await res.json();
+                setPosts(data.posts || []);
+            } else {
+                console.error("Failed to load posts");
             }
-
-            setCookie("username", newUsername);
-            setUsername(newUsername);
-            setErrorMessage("");
-            alert("Username updated successfully!");
-        } catch (error) {
-            console.error("Error updating username:", error);
-            setErrorMessage("An unexpected error occurred");
+        } catch (err) {
+            console.error("Error loading posts:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
+    if (loading) return <p className="m-16">Loading...</p>;
+
     return (
-        <div className="flex flex-col min-h-screen max-w-[1080px] mx-auto m-16">
+        <div className="flex flex-col min-h-screen max-w-[720px] mx-auto m-16">
             <NavBar />
-            <h1>Profile Page</h1>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
+            <h1 className="text-3xl font-bold mb-6">Profile</h1>
+            <div className="border p-6 rounded shadow space-y-4">
                 <div>
-                    <p><b>Current Username:</b> {username}</p>
-                    <input
-                        type="text"
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        className="border p-2 rounded w-full"
-                    />
-                    <button className="btn btn-primary" onClick={handleUpdateUsername}>
-                        Update Username
-                    </button>
-                    {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-                    <button className="btn btn-primary" onClick={() => {
-                        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                        router.push("/login");
-                    }}>
-                        Logout
-                    </button>
+                    <p className="text-gray-600">Username</p>
+                    <p className="text-xl font-medium">{username}</p>
                 </div>
-            )}
+
+                {/* Beijie: Maybe add posts to the profile */}
+                {/* <div>
+                    <p className="text-gray-600">Your Posts</p>
+                    {posts.length === 0 ? (
+                        <p className="text-gray-500">No posts yet.</p>
+                    ) : (
+                        <ul className="list-disc list-inside space-y-2">
+                            {posts.map((post: any, index) => (
+                                <li key={index}>
+                                    <p className="font-semibold">{post.title}</p>
+                                    <p className="text-sm text-gray-600">{post.location} @ {post.organization}</p>
+                                    <p className="text-sm text-gray-700">{post.description}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div> */}
+            </div>
         </div>
     );
 }
