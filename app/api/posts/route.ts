@@ -27,8 +27,16 @@ export async function POST(req: Request) {
     const data = {
         title: formData.get('title') as string,
         organization: formData.get('organization') as string,
-        location: formData.get('location') as string,
-        description: formData.get('description') as string
+        description: formData.get('description') as string,
+
+        street_number: formData.get('streetNumber') as string,
+        street_name: formData.get('streetName') as string,
+        neighborhood: formData.get('neighborhood') as string,
+        city: formData.get('city') as string,
+        county: formData.get('county') as string,
+        state: formData.get('state') as string,
+        country: formData.get('country') as string,
+        postal_code: formData.get('postalCode') as string
     };
 
     try {
@@ -37,8 +45,16 @@ export async function POST(req: Request) {
             data: {
                 title: data.title,
                 organization: data.organization,
-                location: data.location,
-                description: data.description
+                description: data.description,
+
+                street_number: data.street_number,
+                street_name: data.street_name,
+                neighborhood: data.neighborhood,
+                city: data.city,
+                county: data.county,
+                state: data.state,
+                country: data.country,
+                postal_code: data.postal_code
             },
         });
         return new NextResponse(JSON.stringify(post), { status: 201 });

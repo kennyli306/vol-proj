@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Footer from '@app/components/Footer';
 import NavBar from '@app/components/NavBar';
-import LocationField from '@app/components/LocationField';
+import AddressField from '@app/components/AddressField';
 
 
 export default function PostPage() {
@@ -51,8 +51,8 @@ export default function PostPage() {
                         <input name="title" type="text" className="input w-full" placeholder="Title" required />
                         <legend className="fieldset-legend">Organization</legend>
                         <input name="organization" type="text" className="input w-full" placeholder="Organization" required />
-                        <legend className="fieldset-legend">Location</legend>
-                        <LocationField />
+                        <legend className="fieldset-legend">Address</legend>
+                        <AddressField />
                         <legend className="fieldset-legend">Description</legend>
                         <textarea name="description" className="textarea h-24 w-full" placeholder="Description" required></textarea>
                     </fieldset>

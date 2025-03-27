@@ -11,20 +11,16 @@ model Post {
     id           Int    @id @default(autoincrement())
     title        String
     organization String
-    location     String
     description  String
-}
 
-model Address {
-    id            Int    @id @default(autoincrement())
-    street_number String
-    street_name   String // route
-    neighborhood  String
-    city          String // locality
-    county        String // administrative_area_level_2
-    state         String // administrative_area_level_1 
-    country       String
-    postal_code   String
+    street_number String?
+    street_name   String?
+    neighborhood  String?
+    city          String?
+    county        String?
+    state         String?
+    country       String?
+    postal_code   String?
 }
 
 model User {

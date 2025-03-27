@@ -7,7 +7,7 @@ import NavBar from '@app/components/NavBar';
 import SearchBar from '@app/components/search/SearchBar';
 import Listings from '@app/components/search/Listings';
 import { isUserLoggedIn } from '@app/utils';
-import LocationField from '@app/components/LocationField';
+import LocationField from '@app/components/AddressField';
 
 
 export default function SearchPage() {
