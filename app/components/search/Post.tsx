@@ -11,17 +11,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
     const [title, setTitle] = React.useState<string>("");
     const [organization, setOrganization] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-
     const [address, setAddress] = React.useState<string>("");
-    const [street_number, setStreetNumber] = React.useState<string>("");
-    const [street_name, setStreetName] = React.useState<string>("");
-    const [neighborhood, setNeighborhood] = React.useState<string>("");
-    const [city, setCity] = React.useState<string>("");
-    const [county, setCounty] = React.useState<string>("");
-    const [state, setState] = React.useState<string>("");
-    const [country, setCountry] = React.useState<string>("");
-    const [postal_code, setPostalCode] = React.useState<string>("");
-
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
 
     useEffect(() => {
@@ -39,17 +29,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 setTitle(data.title);
                 setOrganization(data.organization);
                 setDescription(data.description);
-
                 setAddress(data.address);
-                setStreetNumber(data.street_number);
-                setStreetName(data.street_name);
-                setNeighborhood(data.neighborhood);
-                setCity(data.city);
-                setCounty(data.county);
-                setState(data.state);
-                setCountry(data.country);
-                setPostalCode(data.postal_code);
-
                 setPostLoaded(true);
             })
             .catch((error) => console.log(error));
