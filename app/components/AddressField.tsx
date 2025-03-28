@@ -12,6 +12,8 @@ export default function AddressField() {
 
     const [input, setInput] = useState<string>("");
     const addressRef = useRef<HTMLInputElement>(null);
+    const latitude = useRef<HTMLInputElement>(null);
+    const longitude = useRef<HTMLInputElement>(null);
     const streetNumberRef = useRef<HTMLInputElement>(null);
     const streetNameRef = useRef<HTMLInputElement>(null);
     const neighborhoodRef = useRef<HTMLInputElement>(null);
@@ -27,7 +29,7 @@ export default function AddressField() {
 
         const options = {
             componentRestrictions: { country: "us" },
-            fields: ["address_components", "formatted_address"],
+            fields: ["address_components", "formatted_address", "geometry"],
         };
 
         const autocomplete = new google.maps.places.Autocomplete(addressRef.current as HTMLInputElement, options);
@@ -52,6 +54,15 @@ export default function AddressField() {
         if (addressRef.current) {
             addressRef.current.value = place.formatted_address || "";
         }
+        if (place.geometry && place.geometry.location) {
+            if (latitude.current) {
+                latitude.current.value = place.geometry.location.lat().toString() || "";
+            }
+            if (longitude.current) {
+                longitude.current.value = place.geometry.location.lng().toString() || "";
+            }
+        }
+
         if (streetNumberRef.current) {
             streetNumberRef.current.value = getComponent("street_number");
         }
@@ -90,6 +101,8 @@ export default function AddressField() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
             />
+            <input ref={latitude} type="hidden" name="latitude" />
+            <input ref={longitude} type="hidden" name="longitude" />
             <input ref={streetNumberRef} type="hidden" name="street_number" />
             <input ref={streetNameRef} type="hidden" name="street_name" />
             <input ref={neighborhoodRef} type="hidden" name="neighborhood" />

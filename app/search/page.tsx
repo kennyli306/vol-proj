@@ -7,15 +7,12 @@ import NavBar from '@app/components/NavBar';
 import SearchBar from '@app/components/search/SearchBar';
 import Listings from '@app/components/search/Listings';
 import { isUserLoggedIn } from '@app/utils';
-import LocationField from '@app/components/AddressField';
 
 
 export default function SearchPage() {
-    const [refresh, setRefresh] = React.useState<boolean>(false);
     const [authChecked, setAuthChecked] = React.useState<boolean>(false);
-    const handleRefresh = () => {
-        setRefresh((prev: boolean) => !prev);
-    };
+    const [distance, setDistance] = React.useState<number | null>(null);
+    const [refresh, setRefresh] = React.useState<boolean>(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -41,8 +38,8 @@ export default function SearchPage() {
                     <li>Search</li>
                 </ul>
             </div>
-            <SearchBar refreshPage={handleRefresh} />
-            <Listings refresh={refresh} />
+            <SearchBar setDistance={setDistance} setRefresh={setRefresh} refresh={refresh} />
+            <Listings distance={distance} refresh={refresh} />
             <Footer />
         </div>
     );

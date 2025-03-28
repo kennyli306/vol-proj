@@ -13,7 +13,9 @@ model Post {
     organization String
     description  String
 
-    address       String @default("Unknown")
+    address       String  @default("Unknown")
+    latitude      Float?
+    longitude     Float?
     street_number String?
     street_name   String?
     neighborhood  String?

@@ -82,7 +82,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 </svg>
             </button>
 
-            <button onClick={handleDelete} className="btn btn-error">
+            <button onClick={handleDelete} className="btn btn-warning">
                 Delete
             </button>
         </li>

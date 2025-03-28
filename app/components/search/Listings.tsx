@@ -3,16 +3,17 @@ import React, { useEffect } from 'react'
 import Post from '@app/components/search/Post';
 
 interface ListingsProps {
+    distance: number | null;
     refresh: boolean;
 }
 
-export default function Listings({ refresh }: ListingsProps) {
+export default function Listings({ distance, refresh }: ListingsProps) {
     const [posts, setPosts] = React.useState<number[]>([]);
     const [postsLoaded, setPostsLoaded] = React.useState<boolean>(false);
 
     const fetchPosts = async () => {
         let staleRequest = false;
-        const url = `/api/posts/`;
+        const url = `/api/posts?distance=${distance || 0}`;
 
         try {
             const response = await fetch(url);
@@ -49,7 +50,7 @@ export default function Listings({ refresh }: ListingsProps) {
                 <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
                 {
                     postsLoaded ? posts.map((postId, index) => (
-                        <Post key={index} listId={index + 1} postId={postId} onDelete={handlePostDelete}/>
+                        <Post key={index} listId={index + 1} postId={postId} onDelete={handlePostDelete} />
                     )) : <li className="list-row flex justify-center items-center">
                         <span className="loading loading-spinner loading-xl"></span>
                     </li>

@@ -1,16 +1,15 @@
-"use client"
-import { getCookie } from '@app/utils';
 import React, { useRef } from 'react';
 import Link from 'next/link';
 
 interface SearchBarProps {
-    refreshPage: () => void;
+    setDistance: (distance: number | null) => void;
+    setRefresh: (refresh: boolean) => void;
+    refresh: boolean;
 }
 
-export default function SearchBar({ refreshPage }: SearchBarProps) {
-    const formRef = useRef<HTMLFormElement>(null);
-    const addPostModalRef = useRef<HTMLDialogElement>(null);
+export default function SearchBar({ setDistance, setRefresh, refresh }: SearchBarProps) {
     const filterModalRef = useRef<HTMLDialogElement>(null);
+    const distanceInputRef = useRef<HTMLInputElement>(null);
 
     function openModal(modal: HTMLDialogElement | null) {
         if (modal) {
@@ -18,39 +17,22 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
         }
     };
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const username = getCookie("username");
-        if (!username) {
-            console.error("User is not logged in");
-            return;
+    function handleDistanceChange() {
+        const distanceValue = distanceInputRef.current?.value;
+        if (distanceValue) {
+            setDistance(Number(distanceValue));
+        } else {
+            setDistance(null);
         }
-        formData.append("username", username);
+    }
 
-        fetch('/api/posts', {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-
-                if (addPostModalRef.current) {
-                    addPostModalRef.current.close();
-                }
-                if (formRef.current) {
-                    formRef.current.reset(); // Reset the form
-                }
-                refreshPage();
-            })
-            .catch(error => console.error('Error:', error));
+    function handleSearch() {
+        setRefresh(!refresh);
     }
 
     return (
         <div className="max-w-[1080px]">
-            <label className="input m-4">
+            <label className="input m-2">
                 <svg className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24">
@@ -65,13 +47,29 @@ export default function SearchBar({ refreshPage }: SearchBarProps) {
                 </svg>
                 <input type="search" placeholder="Search" />
             </label>
-            <button className="btn" onClick={() => openModal(filterModalRef.current)}>Filters</button>
-            <Link href="/search/posts" className="btn btn-primary float-right">Add Postings</Link>
+            <button className="btn m-2" onClick={() => openModal(filterModalRef.current)}>Filters</button>
+            <button className="btn btn-primary m-2" onClick={() => handleSearch()}>Search</button>
+            <Link href="/search/posts" className="btn btn-secondary float-right">Add Postings</Link>
 
             {/* Modal for filters*/}
             <dialog ref={filterModalRef} className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Filters</h3>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend pt-4">Distance</legend>
+                        <input
+                            ref={distanceInputRef}
+                            type="number"
+                            className="input validator"
+                            placeholder="Distance in miles"
+                            min="1"
+                            title="Must be positive"
+                            onChange={handleDistanceChange}
+                        />
+                        <p className="validator-hint">Must be positive</p>
+                    </fieldset>
+
+
                     <p className="py-4">Press ESC key or click outside to close</p>
                 </div>
                 <form method="dialog" className="modal-backdrop">
