@@ -13,6 +13,7 @@ model Post {
     organization String
     description  String
 
+    address       String @default("Unknown")
     street_number String?
     street_name   String?
     neighborhood  String?

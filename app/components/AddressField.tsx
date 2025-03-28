@@ -49,6 +49,9 @@ export default function AddressField() {
             return component ? component.long_name : "";
         };
 
+        if (addressRef.current) {
+            addressRef.current.value = place.formatted_address || "";
+        }
         if (streetNumberRef.current) {
             streetNumberRef.current.value = getComponent("street_number");
         }

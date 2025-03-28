@@ -10,9 +10,18 @@ interface PostProps {
 export default function Post({ listId, postId, onDelete }: PostProps) {
     const [title, setTitle] = React.useState<string>("");
     const [organization, setOrganization] = React.useState<string>("");
-    const [location, setLocation] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [creatorName, setCreatorName] = React.useState<string>("");
+
+    const [address, setAddress] = React.useState<string>("");
+    const [street_number, setStreetNumber] = React.useState<string>("");
+    const [street_name, setStreetName] = React.useState<string>("");
+    const [neighborhood, setNeighborhood] = React.useState<string>("");
+    const [city, setCity] = React.useState<string>("");
+    const [county, setCounty] = React.useState<string>("");
+    const [state, setState] = React.useState<string>("");
+    const [country, setCountry] = React.useState<string>("");
+    const [postal_code, setPostalCode] = React.useState<string>("");
+
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
 
     useEffect(() => {
@@ -29,9 +38,18 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 }
                 setTitle(data.title);
                 setOrganization(data.organization);
-                setLocation(data.location);
                 setDescription(data.description);
-                setCreatorName(data.creator_name); 
+
+                setAddress(data.address);
+                setStreetNumber(data.street_number);
+                setStreetName(data.street_name);
+                setNeighborhood(data.neighborhood);
+                setCity(data.city);
+                setCounty(data.county);
+                setState(data.state);
+                setCountry(data.country);
+                setPostalCode(data.postal_code);
+
                 setPostLoaded(true);
             })
             .catch((error) => console.log(error));
@@ -49,14 +67,14 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
         )
     }
     const handleDelete = () => {
-      fetch(`/api/posts/${postId}`, {
-        method: "DELETE",
-      })
-        .then((response) => {
-            if (!response.ok) throw Error(response.statusText);
-            onDelete(postId);
+        fetch(`/api/posts/${postId}`, {
+            method: "DELETE",
         })
-        .catch((error) => console.log("Error deleting post:", error));
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                onDelete(postId);
+            })
+            .catch((error) => console.log("Error deleting post:", error));
     };
 
     const currentUsername = getCookie("username");
@@ -67,7 +85,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
             <div >
                 <div className="text-3xl line-clamp-1">{title}</div>
                 <div className="text-m uppercase font-semibold opacity-80 line-clamp-1">{organization}</div>
-                <div className="text-l uppercase font-semibold opacity-60 line-clamp-1">{location}</div>
+                <div className="text-l uppercase font-semibold opacity-60 line-clamp-1">{address}</div>
             </div>
             <p className="list-col-wrap text-xl line-clamp-2">{description}</p>
             <button className="btn btn-square btn-ghost">
@@ -83,11 +101,10 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                     </g>
                 </svg>
             </button>
-            {creatorName === currentUsername && ( // Show only if current user is the owner
-                <button onClick={handleDelete} className="btn btn-danger text-red-500">
+
+            <button onClick={handleDelete} className="btn btn-error">
                 Delete
-                </button>
-            )} 
+            </button>
         </li>
     )
 }

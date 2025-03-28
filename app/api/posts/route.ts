@@ -29,6 +29,7 @@ export async function POST(req: Request) {
         organization: formData.get('organization') as string,
         description: formData.get('description') as string,
 
+        address: formData.get('address') as string,
         street_number: formData.get('streetNumber') as string,
         street_name: formData.get('streetName') as string,
         neighborhood: formData.get('neighborhood') as string,
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
                 organization: data.organization,
                 description: data.description,
 
+                address: data.address,
                 street_number: data.street_number,
                 street_name: data.street_name,
                 neighborhood: data.neighborhood,
