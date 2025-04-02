@@ -10,7 +10,8 @@ export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
-
+    const [returnTo, setReturnTo] = useState("/");
+    
     const handleLogin = async () => {
         setErrorMessage("");
         // Validate input
@@ -41,8 +42,6 @@ export default function LoginPage() {
             setCookie("token", data.token); // Assuming the server returns a token
 
             // Redirect to the returnTo page or home
-            const searchParams = new URLSearchParams(window.location.search);
-            const returnTo = searchParams.get("returnTo") || "/";
             router.replace(returnTo);
 
         } catch (error) {
@@ -55,6 +54,11 @@ export default function LoginPage() {
     useEffect(() => {
             if (isUserLoggedIn()) {
                 router.replace("/"); // redirect to the home page
+            }
+            const searchParams = new URLSearchParams(window.location.search);
+            setReturnTo(searchParams.get("returnTo") || "/")
+            if (returnTo == "login"){
+                setReturnTo("/")
             }
     }, [router]);
     
@@ -90,7 +94,7 @@ export default function LoginPage() {
                     <div className="text-center mt-4">
                         <p className="text-gray-600">Not have an account? 
                             <a 
-                                href={`/signup?returnTo=${encodeURIComponent(window.location.pathname)}`} 
+                                href={`/signup?returnTo=${encodeURIComponent(returnTo)}`} 
                                 className="text-blue-500 font-semibold hover:underline"
                             > Sign up</a>
                         </p>

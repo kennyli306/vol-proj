@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { setCookie } from '@app/utils';
 import NavBar from '@app/components/NavBar';
@@ -9,6 +9,7 @@ export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
+    const [returnTo, setReturnTo] = useState("/");
 
     const handleSignup = async () => {
         setErrorMessage("");
@@ -51,6 +52,14 @@ export default function LoginPage() {
         }
     };
 
+    useEffect(() => {
+                const searchParams = new URLSearchParams(window.location.search);
+                setReturnTo(searchParams.get("returnTo") || "/")
+                if (returnTo == "signup"){
+                    setReturnTo("/")
+                }
+    }, [router]);
+    
     return (
         <div className="flex flex-col min-h-screen max-w-[1080px] mx-auto m-16">
             <NavBar />
@@ -83,7 +92,7 @@ export default function LoginPage() {
                     <div className="text-center mt-4">
                         <p className="text-gray-600">Already have an account? 
                             <a 
-                                href="/login" 
+                                href={`/login?returnTo=${returnTo}`} 
                                 className="text-blue-500 font-semibold hover:underline"
                             > Login</a>
                         </p>
