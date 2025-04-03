@@ -13,6 +13,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
     const [description, setDescription] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
+    const [owner, setOwner] = React.useState<string>("")
 
     useEffect(() => {
         let staleRequest = false;
@@ -31,6 +32,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 setDescription(data.description);
                 setAddress(data.address);
                 setPostLoaded(true);
+                setOwner(data.owner);
             })
             .catch((error) => console.log(error));
 
@@ -81,10 +83,11 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                     </g>
                 </svg>
             </button>
-
-            <button onClick={handleDelete} className="btn btn-warning">
-                Delete
-            </button>
+            {owner == currentUsername && (
+                <button onClick={handleDelete} className="btn btn-warning">
+                    Delete
+                </button>
+            )}
         </li>
     )
 }

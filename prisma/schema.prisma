@@ -24,6 +24,8 @@ model Post {
     state         String?
     country       String?
     postal_code   String?
+
+    owner String?
 }
 
 model User {

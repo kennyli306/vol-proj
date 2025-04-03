@@ -66,7 +66,9 @@ export async function POST(req: Request) {
                 county: formData.get('county') as string,
                 state: formData.get('state') as string,
                 country: formData.get('country') as string,
-                postal_code: formData.get('postalCode') as string
+                postal_code: formData.get('postalCode') as string,
+
+                owner: formData.get('username') as string
             },
         });
         return new NextResponse(JSON.stringify(post), { status: 201 });
