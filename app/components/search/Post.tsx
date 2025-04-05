@@ -83,7 +83,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                     </g>
                 </svg>
             </button>
-            {owner == currentUsername && (
+            {(owner == currentUsername || owner == "") && (
                 <button onClick={handleDelete} className="btn btn-warning">
                     Delete
                 </button>
