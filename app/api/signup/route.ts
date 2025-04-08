@@ -1,33 +1,54 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
-export async function POST(req: Request) {
-    const { username, password } = await req.json();
+const SALT_ROUNDS = 10;
 
+export async function POST(req: Request) {
     try {
+        const { username, password } = await req.json();
+
+        // Input validation
         if (!username || !password) {
-            return NextResponse.json({ message: "Username and password are required." }, { status: 400 });
+            return NextResponse.json(
+                { message: "Username and password are required." },
+                { status: 400 }
+            );
         }
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
-            where: { username: username },
+            where: { username },
         });
         if (existingUser) {
-            return NextResponse.json({ message: "Username already exists." }, { status: 400 });
+            return NextResponse.json(
+                { message: "Username already exists." },
+                { status: 400 }
+            );
         }
-        // Create new user
+
+        // Hash the password using bcrypt
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+        // Create new user with hashed password
         const newUser = await prisma.user.create({
             data: {
-                username: username,
-                password: password,
+                username,
+                password: hashedPassword,
             },
         });
 
-        return new NextResponse(JSON.stringify(newUser), { status: 201 });
-    } catch (error) {
+        // Remove the password field from the response
+        const { password: _discard, ...userWithoutPassword } = newUser;
+
+        return new NextResponse(JSON.stringify(userWithoutPassword), { status: 201 });
+    } 
+    catch (error) {
         console.error("Error creating user:", error);
-        return new NextResponse(JSON.stringify({ error: "Error creating user" }), { status: 500 });
+        return new NextResponse(
+            JSON.stringify({ error: "Error creating user" }),
+            { status: 500 }
+        );
     }
 }

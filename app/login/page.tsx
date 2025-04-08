@@ -11,10 +11,9 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
     const [returnTo, setReturnTo] = useState("/");
-    
+
     const handleLogin = async () => {
         setErrorMessage("");
-        // Validate input
         if (!username || !password) {
             setErrorMessage("Both username and password are required.");
             return;
@@ -39,29 +38,28 @@ export default function LoginPage() {
             // Handle successful login
             const data = await response.json();
             setCookie("username", data.username);
-            setCookie("token", data.token); // Assuming the server returns a token
-
-            // Redirect to the returnTo page or home
+            if (data.token) {  // Only set token if provided by the server
+                setCookie("token", data.token);
+            }
             router.replace(returnTo);
-
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Login error:", error);
             setErrorMessage("An unexpected error occurred.");
         }
     };
 
-    
     useEffect(() => {
-            if (isUserLoggedIn()) {
-                router.replace("/"); // redirect to the home page
-            }
-            const searchParams = new URLSearchParams(window.location.search);
-            setReturnTo(searchParams.get("returnTo") || "/")
-            if (returnTo == "login"){
-                setReturnTo("/")
-            }
+        if (isUserLoggedIn()) {
+            router.replace("/");  // redirect to home page if already logged in
+        }
+        const searchParams = new URLSearchParams(window.location.search);
+        setReturnTo(searchParams.get("returnTo") || "/")
+        if (returnTo === "login") {
+            setReturnTo("/")
+        }
     }, [router]);
-    
+
     return (
         <div className="flex flex-col min-h-screen max-w-[1080px] mx-auto m-16">
             <NavBar />
