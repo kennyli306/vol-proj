@@ -92,7 +92,7 @@ export default function LoginPage() {
                         Log in
                     </button>
                     <div className="text-center mt-4">
-                        <p className="text-gray-600">Not have an account? 
+                        <p className="text-gray-600">Don't have an account? 
                             <a 
                                 href={`/signup?returnTo=${encodeURIComponent(returnTo)}`} 
                                 className="text-blue-500 font-semibold hover:underline"

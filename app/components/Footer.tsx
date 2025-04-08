@@ -8,8 +8,10 @@ export default function Footer() {
                 <h1 className="footer-title">Vol Project</h1>
                 <p>Kenny Li</p>
                 <p>Maizhe Zhang</p>
+                <p>Beijie Liu</p>
+                <p>Joseph Wood</p>
+                <p>Stanley Zhang</p>
             </nav>
         </footer>
     );
 }
-
