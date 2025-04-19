@@ -43,13 +43,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     const formData = await req.formData();
-    const data = {
-
-
-    };
 
     try {
-        console.log("Data received:", data);
+        console.log("Form received:", formData);
         const post = await prisma.post.create({
             data: {
                 title: formData.get('title') as string,
@@ -68,7 +64,7 @@ export async function POST(req: Request) {
                 country: formData.get('country') as string,
                 postal_code: formData.get('postalCode') as string,
 
-                owner: formData.get('username') as string
+                owner_email: formData.get('email') as string,
             },
         });
         return new NextResponse(JSON.stringify(post), { status: 201 });

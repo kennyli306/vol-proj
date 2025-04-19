@@ -5,6 +5,7 @@ import { setCookie } from '@app/utils';
 import NavBar from '@app/components/NavBar';
 import { isUserLoggedIn } from '@app/utils';
 
+/* PAGE NOT USED */
 export default function LoginPage() {
     const router = useRouter();
     const [username, setUsername] = useState('');
@@ -67,32 +68,32 @@ export default function LoginPage() {
                 <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
                     <h1 className="text-2xl font-semibold text-center mb-6">Login</h1>
                     {errorMessage && <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>}
-                    <input 
-                        type="text" 
-                        placeholder="Username" 
-                        value={username} 
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
                     />
-                    <input 
-                        type="password" 
-                        placeholder="Password" 
-                        value={password} 
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
                     />
-                    <button 
-                        onClick={handleLogin} 
+                    <button
+                        onClick={handleLogin}
                         className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
                     >
                         Log in
                     </button>
                     <div className="text-center mt-4">
-                        <p className="text-gray-600">Don't have an account? 
-                            <a 
-                                href={`/signup?returnTo=${encodeURIComponent(returnTo)}`} 
+                        <p className="text-gray-600">Don't have an account?
+                            <a
+                                href={`/signup?returnTo=${encodeURIComponent(returnTo)}`}
                                 className="text-blue-500 font-semibold hover:underline"
                             > Sign up</a>
                         </p>

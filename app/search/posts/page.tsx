@@ -5,13 +5,27 @@ import { useRouter } from 'next/navigation';
 import Footer from '@app/components/Footer';
 import NavBar from '@app/components/NavBar';
 import AddressField from '@app/components/AddressField';
-import { getCookie } from '@app/utils';
+import { useSession } from 'next-auth/react';
 
 
 export default function PostPage() {
-    const formRef = useRef<HTMLFormElement>(null);
     const router = useRouter();
-    const username = getCookie("username")
+    const formRef = useRef<HTMLFormElement>(null);
+    const [email, setEmail] = React.useState<string>("");
+    const { data: session, status } = useSession();
+
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push(`/api/auth/signin?callbackUrl=${encodeURIComponent("/search/posts")}`);
+        } else if (status === "authenticated") {
+            setEmail(session?.user?.email || "");
+        }
+    }, [status, router]);
+    if (status === "loading" || status === "unauthenticated") {
+        return null;
+    }
+
+
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -47,7 +61,6 @@ export default function PostPage() {
             {/* Form for adding posts */}
             <main className="flex items-start justify-center w-full min-h-screen ">
                 <form ref={formRef} onSubmit={handleSubmit} className="shadow-xl p-8 rounded-lg w-full max-w-2xl">
-                    <input type="hidden" name="username" value={username || ''} />
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend pt-4">Title</legend>
                         <input name="title" type="text" className="input w-full" placeholder="Title" required />
@@ -58,6 +71,7 @@ export default function PostPage() {
                         <legend className="fieldset-legend">Description</legend>
                         <textarea name="description" className="textarea h-24 w-full" placeholder="Description" required></textarea>
                     </fieldset>
+                    <input type="hidden" name="email" value={email} />
 
                     <div className="flex justify-center mt-4">
                         <button type="submit" className="btn btn-primary">Add Post</button>

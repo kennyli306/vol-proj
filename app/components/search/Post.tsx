@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect } from 'react'
-import { getCookie } from '@app/utils';
+import { useSession } from 'next-auth/react';
 interface PostProps {
     listId: number;
     postId: number;
@@ -8,12 +8,20 @@ interface PostProps {
 }
 
 export default function Post({ listId, postId, onDelete }: PostProps) {
+    const { data: session, status } = useSession();
+    const [email, setEmail] = React.useState<string>("");
     const [title, setTitle] = React.useState<string>("");
     const [organization, setOrganization] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [address, setAddress] = React.useState<string>("");
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
-    const [owner, setOwner] = React.useState<string>("")
+    const [ownerEmail, setOwnerEmail] = React.useState<string>("")
+
+    useEffect(() => {
+            if (status !== "loading") {
+                setEmail(session?.user?.email || "");
+            }
+        }, [status]);
 
     useEffect(() => {
         let staleRequest = false;
@@ -31,11 +39,10 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 setOrganization(data.organization);
                 setDescription(data.description);
                 setAddress(data.address);
+                setOwnerEmail(data.owner_email);
                 setPostLoaded(true);
-                setOwner(data.owner);
             })
             .catch((error) => console.log(error));
-
         return () => {
             staleRequest = true;
         };
@@ -59,8 +66,6 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
             .catch((error) => console.log("Error deleting post:", error));
     };
 
-    const currentUsername = getCookie("username");
-
     return (
         <li className="list-row">
             <div className="text-6xl font-thin opacity-30 tabular-nums">{listId}</div>
@@ -83,7 +88,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                     </g>
                 </svg>
             </button>
-            {(owner == currentUsername || owner == "") && (
+            {(ownerEmail == email) && (
                 <button onClick={handleDelete} className="btn btn-warning">
                     Delete
                 </button>

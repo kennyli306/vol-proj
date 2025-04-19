@@ -1,18 +1,14 @@
 "use client"
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { deleteCookie } from "@app/utils";
 
 export default function NavBar() {
     const router = useRouter();
 
-    const handleLogout = () => {
-      // Remove authentication cookies
-      deleteCookie("username");
-      // Redirect to home page
-      router.replace("/");
-    };
+    const {data:session} =  useSession();
+    const image = session?.user?.image || "/default_pfp.png";
 
     return (
         <div className="navbar shadow-md mt-4 mb-4">
@@ -22,27 +18,20 @@ export default function NavBar() {
             <div className="flex-none">
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                        <Image className="w-10 rounded-full" src="/default_pfp.png" width={250} height={250} alt="Profile Image" />
+                        <Image className="w-10 rounded-full" src={image} width={250} height={250} alt="Profile Image" />
                     </div>
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between" onClick={() => router.push("/profile")} >
+                            <Link className="justify-between" href="/profile">
                                 Profile
-                                <span className="badge bg-error text-error-content">TODO</span>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a className="justify-between" onClick={() => router.push("/settings")}>
-                                Settings
-                                <span className="badge bg-error text-error-content">TODO</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a className="justify-between" onClick={handleLogout}>
+                            <button className="justify-between" onClick={() => signOut({ callbackUrl: "/" })}>
                                 Logout
-                            </a>
+                            </button>
                         </li>
                     </ul>
                 </div>

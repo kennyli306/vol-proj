@@ -4,9 +4,8 @@ import { useLoadScript } from "@react-google-maps/api";
 import { libraries } from "@app/utils";
 
 export default function AddressField() {
-    const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || "";
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey,
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || "",
         libraries,
     });
 
