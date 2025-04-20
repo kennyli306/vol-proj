@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react';
 interface PostProps {
     listId: number;
@@ -17,11 +17,13 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
     const [postLoaded, setPostLoaded] = React.useState<boolean>(false);
     const [ownerEmail, setOwnerEmail] = React.useState<string>("")
 
+    const modalRef = useRef<HTMLDialogElement>(null);
+
     useEffect(() => {
-            if (status !== "loading") {
-                setEmail(session?.user?.email || "");
-            }
-        }, [status]);
+        if (status !== "loading") {
+            setEmail(session?.user?.email || "");
+        }
+    }, [status]);
 
     useEffect(() => {
         let staleRequest = false;
@@ -50,8 +52,8 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
 
     if (!postLoaded) {
         return (
-            <li className="list-row flex justify-center items-center">
-                <span className="loading loading-spinner loading-xl"></span>
+            <li className="container mx-auto px-4">
+                <div className="list-row skeleton h-32 w-full my-4"></div>
             </li>
         )
     }
@@ -66,6 +68,12 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
             .catch((error) => console.log("Error deleting post:", error));
     };
 
+    const showModal = () => {
+        if (modalRef.current) {
+            modalRef.current.showModal();
+        }
+    };
+
     return (
         <li className="list-row">
             <div className="text-6xl font-thin opacity-30 tabular-nums">{listId}</div>
@@ -73,26 +81,27 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 <div className="text-3xl line-clamp-1">{title}</div>
                 <div className="text-m uppercase font-semibold opacity-80 line-clamp-1">{organization}</div>
                 <div className="text-l uppercase font-semibold opacity-60 line-clamp-1">{address}</div>
+                <p className="list-col-wrap text-xl line-clamp-2">{description}</p>
             </div>
-            <p className="list-col-wrap text-xl line-clamp-2">{description}</p>
-            <button className="btn btn-square btn-ghost">
-                <svg className="size-[1.2em]"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24">
-                    <g strokeLinejoin="round"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        fill="none"
-                        stroke="currentColor">
-                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                    </g>
-                </svg>
-            </button>
-            {(ownerEmail == email) && (
-                <button onClick={handleDelete} className="btn btn-warning">
-                    Delete
-                </button>
-            )}
-        </li>
+            {
+                (ownerEmail == email) && (
+                    <button onClick={handleDelete} className="btn btn-warning">
+                        Delete
+                    </button>
+                )
+
+            }
+            <button className="btn btn-accent" onClick={() => showModal()}>Contact</button>
+            <dialog ref={modalRef} id="my_modal_2" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-2xl">Email</h3>
+                    <p className="text-lg">{ownerEmail}</p>
+                    <p className="py-4">Press ESC key or click outside to close</p>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
+        </li >
     )
 }

@@ -59,7 +59,7 @@ export default function PostPage() {
                 </ul>
             </div>
             {/* Form for adding posts */}
-            <main className="flex items-start justify-center w-full min-h-screen ">
+            <main className="flex items-start justify-center w-full min-h-screen">
                 <form ref={formRef} onSubmit={handleSubmit} className="shadow-xl p-8 rounded-lg w-full max-w-2xl">
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend pt-4">Title</legend>
