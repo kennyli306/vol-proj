@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Vol Project",
+    title: "Volunteer Project",
     description: "Find volunteer opportunities near you",
 };
 
