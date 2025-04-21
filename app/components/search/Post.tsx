@@ -44,7 +44,7 @@ export default function Post({ listId, postId, onDelete }: PostProps) {
                 setOwnerEmail(data.owner_email);
                 setPostLoaded(true);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log("Error deleting post:", error));
         return () => {
             staleRequest = true;
         };

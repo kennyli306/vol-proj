@@ -3,7 +3,13 @@ import React, { useEffect } from 'react'
 import Post from '@app/components/search/Post';
 
 interface ListingsProps {
-    form: { searchTerm: string; distance: number | null };
+    form: {
+        searchTerm: string;
+        distance: string;
+        city: string;
+        county: string;
+        state: string;
+    },
     refresh: boolean;
 }
 
@@ -17,8 +23,12 @@ export default function Listings({ form, refresh }: ListingsProps) {
 
     const fetchPosts = async () => {
         let staleRequest = false;
-        const { searchTerm, distance } = form;
-        const url = `/api/posts?searchTerm=${encodeURIComponent(searchTerm)}&distance=${distance || 0}&page=${page}`;
+        const searchTermURI = form.searchTerm ? `searchTerm=${encodeURIComponent(form.searchTerm)}` : '';
+        const distanceURI = form.distance ? `&distance=${encodeURIComponent(form.distance)}` : '';
+        const cityURI = form.city ? `&city=${encodeURIComponent(form.city)}` : '';
+        const countyURI = form.county ? `&county=${encodeURIComponent(form.county)}` : '';
+        const stateURI = form.state ? `&state=${encodeURIComponent(form.state)}` : '';
+        const url = `/api/posts?${searchTermURI}${distanceURI}${cityURI}${countyURI}${stateURI}&page=${page}`;
 
         try {
             const response = await fetch(url);

@@ -10,6 +10,9 @@ export async function GET(req: Request) {
 
     const searchTerm = searchParams.get('searchTerm')?.toLowerCase() || '';
     const distance = Number(searchParams.get('distance'));
+    const city = searchParams.get('city')?.toLowerCase() || '';
+    const county = searchParams.get('county')?.toLowerCase() || '';
+    const state = searchParams.get('state')?.toLowerCase() || '';
 
     const latitude = 42.2808;
     const longitude = -83.7430;
@@ -24,19 +27,19 @@ export async function GET(req: Request) {
                 latitude: distance !== 0,
                 longitude: distance !== 0,
             },
-        });
+            where: {
+                OR: [
+                    { title: { contains: searchTerm, mode: 'insensitive' } },
+                    { organization: { contains: searchTerm, mode: 'insensitive' } },
+                    { description: { contains: searchTerm, mode: 'insensitive' } },
+                ],
+                AND: [
+                    city ? { city: { contains: city, mode: 'insensitive' } } : {},
+                    county ? { county: { contains: county, mode: 'insensitive' } } : {},
+                    state ? { state: { contains: state, mode: 'insensitive' } } : {},
+                ],
 
-        /* Keyword Search */
-        posts = posts.filter((post) => {
-            const title = post.title?.toLowerCase() || '';
-            const organization = post.organization?.toLowerCase() || '';
-            const description = post.description?.toLowerCase() || '';
-            
-            return (
-                title.includes(searchTerm) ||
-                organization.includes(searchTerm) ||
-                description.includes(searchTerm)
-            );
+            },
         });
 
         /* Distance */
@@ -79,7 +82,6 @@ export async function POST(req: Request) {
     const formData = await req.formData();
 
     try {
-        console.log("Form received:", formData);
         const post = await prisma.post.create({
             data: {
                 title: formData.get('title') as string,

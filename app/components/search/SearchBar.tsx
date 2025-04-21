@@ -2,36 +2,32 @@ import React, { useRef } from 'react';
 import Link from 'next/link';
 
 interface SearchBarProps {
-    setForm: React.Dispatch<React.SetStateAction<{ searchTerm: string; distance: number | null }>>;
+    setForm: React.Dispatch<React.SetStateAction<{
+        searchTerm: string;
+        distance: string;
+        city: string;
+        county: string;
+        state: string;
+    }>>;
+    form: {
+        searchTerm: string;
+        distance: string;
+        city: string;
+        county: string;
+        state: string;
+    };
     setRefresh: (refresh: boolean) => void;
     refresh: boolean;
 }
 
-export default function SearchBar({ setForm, setRefresh, refresh }: SearchBarProps) {
+export default function SearchBar({ setForm, form, setRefresh, refresh }: SearchBarProps) {
     const filterModalRef = useRef<HTMLDialogElement>(null);
-    const searchTermRef = useRef<HTMLInputElement>(null);
-    const distanceInputRef = useRef<HTMLInputElement>(null);
 
     function openModal(modal: HTMLDialogElement | null) {
         if (modal) {
             modal.showModal();
         }
     };
-
-    function handleSearchTermChange() {
-        const searchTermValue = searchTermRef.current?.value;
-        setForm((prevForm) => ({
-            ...prevForm,
-            searchTerm: searchTermValue || '',
-        }));
-    }
-    function handleDistanceChange() {
-        const distanceValue = distanceInputRef.current?.value;
-        setForm((prevForm) => ({
-            ...prevForm,
-            distance: distanceValue ? Number(distanceValue) : null,
-        }));
-    }
 
     function handleSearch() {
         setRefresh(!refresh);
@@ -52,8 +48,13 @@ export default function SearchBar({ setForm, setRefresh, refresh }: SearchBarPro
                         <path d="m21 21-4.3-4.3"></path>
                     </g>
                 </svg>
-                <input ref={searchTermRef} type="search" className="grow" placeholder="Search"
-                onChange={handleSearchTermChange} />
+                <input
+                    type="search"
+                    className="grow"
+                    placeholder="Search"
+                    value={form.searchTerm}
+                    onChange={(e) => setForm((prevForm) => ({ ...prevForm, searchTerm: e.target.value }))}
+                />
             </label>
             <button className="btn m-2" onClick={() => openModal(filterModalRef.current)}>Filters</button>
             <button className="btn btn-primary m-2" onClick={() => handleSearch()}>Search</button>
@@ -63,21 +64,44 @@ export default function SearchBar({ setForm, setRefresh, refresh }: SearchBarPro
             <dialog ref={filterModalRef} className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Filters</h3>
-                    <fieldset className="fieldset">
+                    <fieldset className="fieldset pb-8">
                         <legend className="fieldset-legend pt-4">Distance</legend>
                         <input
-                            ref={distanceInputRef}
                             type="number"
                             className="input validator"
                             placeholder="Distance in miles"
-                            min="0"
-                            title="Can't be negative"
-                            onChange={handleDistanceChange}
+                            min="1"
+                            title="Must be positive"
+                            value={form.distance}
+                            onChange={(e) => setForm((prevForm) => ({ ...prevForm, distance: e.target.value }))}
                         />
-                        <p className="validator-hint">Can't be negative</p>
+                        <p className="validator-hint">Must be positive</p>
+
+                        <legend className="fieldset-legend">City</legend>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="City"
+                            value={form.city}
+                            onChange={(e) => setForm((prevForm) => ({ ...prevForm, city: e.target.value }))}
+                        />
+                        <legend className="fieldset-legend">County</legend>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="County"
+                            value={form.county}
+                            onChange={(e) => setForm((prevForm) => ({ ...prevForm, county: e.target.value }))}
+                        />
+                        <legend className="fieldset-legend">State</legend>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="State"
+                            value={form.state}
+                            onChange={(e) => setForm((prevForm) => ({ ...prevForm, state: e.target.value }))}
+                        />
                     </fieldset>
-
-
                     <p className="py-4">Press ESC key or click outside to close</p>
                 </div>
                 <form method="dialog" className="modal-backdrop">

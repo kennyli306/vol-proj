@@ -7,9 +7,18 @@ import SearchBar from '@app/components/search/SearchBar';
 import Listings from '@app/components/search/Listings';
 
 export default function SearchPage() {
-    const [form, setForm] = React.useState<{ searchTerm: string; distance: number | null }>({
+    const [form, setForm] = React.useState<{
+        searchTerm: string;
+        distance: string;
+        city: string;
+        county: string;
+        state: string;
+    }>({
         searchTerm: '',
-        distance: null,
+        distance: '',
+        city: '',
+        county: '',
+        state: '',
     });
     const [refresh, setRefresh] = React.useState<boolean>(false);
 
@@ -24,7 +33,7 @@ export default function SearchPage() {
                     <li>Search</li>
                 </ul>
             </div>
-            <SearchBar setForm={setForm} setRefresh={setRefresh} refresh={refresh} />
+            <SearchBar setForm={setForm} form={form} setRefresh={setRefresh} refresh={refresh} />
             <Listings form={form} refresh={refresh} />
             <Footer />
         </div>

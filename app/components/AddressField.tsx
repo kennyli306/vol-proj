@@ -44,7 +44,6 @@ export default function AddressField() {
             return;
         }
 
-        console.log("Place:", place);
         const getComponent = (type: string) => {
             const component = place.address_components!.find((c) => c.types.includes(type));
             return component ? component.long_name : "";
