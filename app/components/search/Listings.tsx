@@ -9,11 +9,15 @@ interface ListingsProps {
 
 export default function Listings({ distance, refresh }: ListingsProps) {
     const [posts, setPosts] = React.useState<number[]>([]);
+    const [page, setPage] = React.useState<number>(1);
+    const [totalPages, setTotalPages] = React.useState<number>(0);
+    const [startIndex, setStartIndex] = React.useState<number>(0);
+    const [totalPosts, setTotalPosts] = React.useState<number>(0);
     const [postsLoaded, setPostsLoaded] = React.useState<boolean>(false);
 
     const fetchPosts = async () => {
         let staleRequest = false;
-        const url = `/api/posts?distance=${distance || 0}`;
+        const url = `/api/posts?distance=${distance || 0}&page=${page}`;
 
         try {
             const response = await fetch(url);
@@ -23,8 +27,12 @@ export default function Listings({ distance, refresh }: ListingsProps) {
 
             const data = await response.json();
             if (!staleRequest) {
-                const postIds = data.map((post: { id: number }) => post.id);
+                const postIds = data.paginatedPosts.map((post: { id: number }) => post.id);
                 setPosts(postIds);
+                setPage(data.page);
+                setTotalPages(data.totalPages);
+                setStartIndex(data.startIndex);
+                setTotalPosts(data.totalPosts);
                 setPostsLoaded(true);
             }
         } catch (error) {
@@ -38,7 +46,7 @@ export default function Listings({ distance, refresh }: ListingsProps) {
 
     useEffect(() => {
         fetchPosts();
-    }, [refresh]);
+    }, [refresh, page]);
 
     const handlePostDelete = (deletedPostId: number) => {
         setPosts(currentPosts => currentPosts.filter(id => id !== deletedPostId));
@@ -47,19 +55,27 @@ export default function Listings({ distance, refresh }: ListingsProps) {
     return (
         <div>
             <ul className="list rounded-box shadow-md min-h-screen mb-4">
-                <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Showing postings</li>
+                <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">{totalPosts} found</li>
                 {
                     postsLoaded ? posts.map((postId, index) => (
-                        <Post key={index} listId={index + 1} postId={postId} onDelete={handlePostDelete} />
+                        <Post key={index} listId={index + 1 + startIndex} postId={postId} onDelete={handlePostDelete} />
                     )) : <li className="list-row flex justify-center items-center">
                         <span className="loading loading-spinner loading-xl"></span>
                     </li>
                 }
             </ul>
             <div className="join float-right">
-                <button className="join-item btn btn-active">1</button>
-                <button className="join-item btn">2</button>
-                <button className="join-item btn btn-disabled">...</button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <input
+                        key={index}
+                        className="join-item btn btn-square"
+                        type="radio"
+                        name="options"
+                        aria-label={`${index + 1}`}
+                        checked={page === index + 1}
+                        onChange={() => setPage(index + 1)}
+                    />
+                ))}
             </div>
         </div>
     )

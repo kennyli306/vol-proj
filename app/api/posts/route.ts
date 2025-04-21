@@ -5,8 +5,9 @@ const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = 9;
     const distance = Number(searchParams.get('distance'));
-    console.log(distance);
 
     const latitude = 42.2808;
     const longitude = -83.7430;
@@ -20,6 +21,7 @@ export async function GET(req: Request) {
             },
         });
 
+        /* Distance */
         const filteredPosts = posts.filter((post) => {
             if (distance === 0) {
                 return true;
@@ -29,7 +31,21 @@ export async function GET(req: Request) {
             return false;
         });
 
-        return new NextResponse(JSON.stringify(filteredPosts), {
+        /* Pagination */
+        const totalPosts = filteredPosts.length;
+        const totalPages = Math.ceil(totalPosts / limit);
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+        return new NextResponse(
+            JSON.stringify({
+                page,
+                totalPages,
+                startIndex,
+                totalPosts,
+                paginatedPosts,
+            }),
+            {
             status: 200,
             headers: {
                 'Content-Type': 'application/json'
