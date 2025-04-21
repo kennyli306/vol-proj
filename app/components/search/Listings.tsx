@@ -3,11 +3,11 @@ import React, { useEffect } from 'react'
 import Post from '@app/components/search/Post';
 
 interface ListingsProps {
-    distance: number | null;
+    form: { searchTerm: string; distance: number | null };
     refresh: boolean;
 }
 
-export default function Listings({ distance, refresh }: ListingsProps) {
+export default function Listings({ form, refresh }: ListingsProps) {
     const [posts, setPosts] = React.useState<number[]>([]);
     const [page, setPage] = React.useState<number>(1);
     const [totalPages, setTotalPages] = React.useState<number>(0);
@@ -17,7 +17,8 @@ export default function Listings({ distance, refresh }: ListingsProps) {
 
     const fetchPosts = async () => {
         let staleRequest = false;
-        const url = `/api/posts?distance=${distance || 0}&page=${page}`;
+        const { searchTerm, distance } = form;
+        const url = `/api/posts?searchTerm=${encodeURIComponent(searchTerm)}&distance=${distance || 0}&page=${page}`;
 
         try {
             const response = await fetch(url);
@@ -27,7 +28,7 @@ export default function Listings({ distance, refresh }: ListingsProps) {
 
             const data = await response.json();
             if (!staleRequest) {
-                const postIds = data.paginatedPosts.map((post: { id: number }) => post.id);
+                const postIds = data.posts.map((post: { id: number }) => post.id);
                 setPosts(postIds);
                 setPage(data.page);
                 setTotalPages(data.totalPages);

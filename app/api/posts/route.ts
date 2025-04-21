@@ -7,22 +7,40 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const page = Number(searchParams.get('page')) || 1;
     const limit = 9;
+
+    const searchTerm = searchParams.get('searchTerm')?.toLowerCase() || '';
     const distance = Number(searchParams.get('distance'));
 
     const latitude = 42.2808;
     const longitude = -83.7430;
 
     try {
-        const posts = await prisma.post.findMany({
+        let posts = await prisma.post.findMany({
             select: {
                 id: true,
-                latitude: true,
-                longitude: true,
+                title: searchTerm !== '',
+                organization: searchTerm !== '',
+                description: searchTerm !== '',
+                latitude: distance !== 0,
+                longitude: distance !== 0,
             },
         });
 
+        /* Keyword Search */
+        posts = posts.filter((post) => {
+            const title = post.title?.toLowerCase() || '';
+            const organization = post.organization?.toLowerCase() || '';
+            const description = post.description?.toLowerCase() || '';
+            
+            return (
+                title.includes(searchTerm) ||
+                organization.includes(searchTerm) ||
+                description.includes(searchTerm)
+            );
+        });
+
         /* Distance */
-        const filteredPosts = posts.filter((post) => {
+        posts = posts.filter((post) => {
             if (distance === 0) {
                 return true;
             } else if (post.latitude !== null && post.longitude !== null) {
@@ -32,25 +50,25 @@ export async function GET(req: Request) {
         });
 
         /* Pagination */
-        const totalPosts = filteredPosts.length;
+        const totalPosts = posts.length;
         const totalPages = Math.ceil(totalPosts / limit);
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
-        const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+        posts = posts.slice(startIndex, endIndex);
         return new NextResponse(
             JSON.stringify({
                 page,
                 totalPages,
                 startIndex,
                 totalPosts,
-                paginatedPosts,
+                posts,
             }),
             {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
     } catch (error) {
         console.error("Error fetching post:", error);
         return new NextResponse(JSON.stringify({ error: "Error fetching post" }), { status: 500 });

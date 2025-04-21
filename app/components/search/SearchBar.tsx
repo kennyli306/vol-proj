@@ -2,13 +2,14 @@ import React, { useRef } from 'react';
 import Link from 'next/link';
 
 interface SearchBarProps {
-    setDistance: (distance: number | null) => void;
+    setForm: React.Dispatch<React.SetStateAction<{ searchTerm: string; distance: number | null }>>;
     setRefresh: (refresh: boolean) => void;
     refresh: boolean;
 }
 
-export default function SearchBar({ setDistance, setRefresh, refresh }: SearchBarProps) {
+export default function SearchBar({ setForm, setRefresh, refresh }: SearchBarProps) {
     const filterModalRef = useRef<HTMLDialogElement>(null);
+    const searchTermRef = useRef<HTMLInputElement>(null);
     const distanceInputRef = useRef<HTMLInputElement>(null);
 
     function openModal(modal: HTMLDialogElement | null) {
@@ -17,13 +18,19 @@ export default function SearchBar({ setDistance, setRefresh, refresh }: SearchBa
         }
     };
 
+    function handleSearchTermChange() {
+        const searchTermValue = searchTermRef.current?.value;
+        setForm((prevForm) => ({
+            ...prevForm,
+            searchTerm: searchTermValue || '',
+        }));
+    }
     function handleDistanceChange() {
         const distanceValue = distanceInputRef.current?.value;
-        if (distanceValue) {
-            setDistance(Number(distanceValue));
-        } else {
-            setDistance(null);
-        }
+        setForm((prevForm) => ({
+            ...prevForm,
+            distance: distanceValue ? Number(distanceValue) : null,
+        }));
     }
 
     function handleSearch() {
@@ -45,7 +52,8 @@ export default function SearchBar({ setDistance, setRefresh, refresh }: SearchBa
                         <path d="m21 21-4.3-4.3"></path>
                     </g>
                 </svg>
-                <input type="search" placeholder="Search" />
+                <input ref={searchTermRef} type="search" className="grow" placeholder="Search"
+                onChange={handleSearchTermChange} />
             </label>
             <button className="btn m-2" onClick={() => openModal(filterModalRef.current)}>Filters</button>
             <button className="btn btn-primary m-2" onClick={() => handleSearch()}>Search</button>
@@ -62,11 +70,11 @@ export default function SearchBar({ setDistance, setRefresh, refresh }: SearchBa
                             type="number"
                             className="input validator"
                             placeholder="Distance in miles"
-                            min="1"
-                            title="Must be positive"
+                            min="0"
+                            title="Can't be negative"
                             onChange={handleDistanceChange}
                         />
-                        <p className="validator-hint">Must be positive</p>
+                        <p className="validator-hint">Can't be negative</p>
                     </fieldset>
 
 

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function NavBar() {
     const router = useRouter();
 
-    const {data:session} =  useSession();
+    const { data: session } = useSession();
     const image = session?.user?.image || "/default_pfp.png";
 
     return (
@@ -16,25 +16,34 @@ export default function NavBar() {
                 <Link className="btn btn-ghost text-xl" href="/">Vol Project</Link>
             </div>
             <div className="flex-none">
-                <div className="dropdown dropdown-end">
-                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                        <Image className="w-10 rounded-full" src={image} width={250} height={250} alt="Profile Image" />
+                {session ? (
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                            <Image className="w-10 rounded-full" src={image} width={250} height={250} alt="Profile Image" />
+                        </div>
+                        <ul
+                            tabIndex={0}
+                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                            <li>
+                                <Link className="justify-between" href="/profile">
+                                    Profile
+                                </Link>
+                            </li>
+                            <li>
+                                <button className="justify-between" onClick={() => signOut({ callbackUrl: "/" })}>
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                        <li>
-                            <Link className="justify-between" href="/profile">
-                                Profile
-                            </Link>
-                        </li>
-                        <li>
-                            <button className="justify-between" onClick={() => signOut({ callbackUrl: "/" })}>
-                                Logout
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                ) : (
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => router.push("/api/auth/signin")}
+                    >
+                        Login
+                    </button>
+                )}
             </div>
         </div>
     );
